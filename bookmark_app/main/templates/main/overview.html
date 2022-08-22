@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<style>
+  .home-container{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+  }
+</style>
+
+<h1>Overview of bookmarks</h1>
+
+<div class="home-container">
+
+  <div>
+    <h3>Browse tags</h3>
+    <div>
+      <a href="{% url 'overview'%}">All</a>  
+    </div>
+    {% for tag in tags%}
+    <div>
+      <a href="{% url 'overview'%}?q={{tag.name}}">{{tag.name}}</a>  
+    </div>
+    {% endfor %}
+  </div>
+
+  <div >
+
+    <a href="{% url 'add-bookmark' %}">Add new bookmark</a>
+
+    <div>
+      {% for bookmark in bookmarks %}
+        <div>
+          <h5>{{bookmark.id}} -- {{bookmark.title}} -- <a href="{{bookmark.url}}">Link</a></h5>
+          <a href="{% url 'edit-bookmark' bookmark.id %}">Edit</a>  <a href="{% url 'delete-bookmark' bookmark.id %}">Delete</a>
+          <hr>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

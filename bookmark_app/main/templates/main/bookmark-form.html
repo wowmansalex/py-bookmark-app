@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>Add a bookmark</h1>
+<div>
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{form.as_p}}
+    <a href="{% url 'add_tag' %}">Add a new tag</a>
+    <input type="submit" value="Submit">
+
+  </form>
+</div> 
+{% endblock %}
