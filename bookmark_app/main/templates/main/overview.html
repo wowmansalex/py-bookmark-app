@@ -10,6 +10,7 @@
 
 <h1>Overview of bookmarks</h1>
 
+
 <div class="home-container">
 
   <div>
@@ -32,11 +33,17 @@
       {% for bookmark in bookmarks %}
         <div>
           <h5>{{bookmark.id}} -- {{bookmark.title}} -- <a href="{{bookmark.url}}">Link</a></h5>
+          
+          {% if request.user == bookmark.user%}
           <a href="{% url 'edit-bookmark' bookmark.id %}">Edit</a>  <a href="{% url 'delete-bookmark' bookmark.id %}">Delete</a>
+          {% endif%}
           <hr>
         </div>
       {% endfor %}
     </div>
   </div>
+  
 </div>
+
+
 {% endblock %}

@@ -7,7 +7,7 @@ class Tag(models.Model):
   name = models.CharField(max_length=200)
 
   def __str__(self):
-    return self.tag
+    return self.name
 
 class Bookmarks(models.Model):
   user = models.ForeignKey(User, default=None, on_delete=models.CASCADE)

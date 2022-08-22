@@ -5,13 +5,15 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from .models import Bookmarks, Tag
 from .forms import BookmarksForm, TagForm
 
 # Create your views here.
 def loginPage(request):
+  page = 'login'
   if request.method == 'POST':
-    username = request.POST.get('username')
+    username = request.POST.get('username').lower()
     password = request.POST.get('password')
 
     try:
@@ -27,12 +29,26 @@ def loginPage(request):
     else:
       messages.error(request, 'User does not exist')
 
-  return render(request, 'main/login_register.html')
+  return render(request, 'main/login_register.html', {'page': page})
 
 def logoutUser(request):
   logout((request))
   return redirect('overview')
 
+def registerPage(request):
+  page = 'register'
+  form = UserCreationForm()
+  if request.method == 'POST':
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+      user = form.save(commit=False) # if
+      user.username = user.username.lower()
+      user.save()
+      login(request, user)
+      return redirect('overview')
+    else:
+      messages.error(request, 'An error occurred')
+  return render(request, 'main/login_register.html', {'page': page, 'form': form})
 
 def overview(request):
   q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -55,6 +71,7 @@ def add(request):
       return redirect('overview')
   return render(request, 'main/bookmark-form.html', {'form': form})
 
+@login_required(login_url='login')
 def add_tag(request):
   form = TagForm()
   if request.method == 'POST':
@@ -64,6 +81,7 @@ def add_tag(request):
       return redirect('overview')
   return render(request, 'main/tag-form.html', {'form': form})
 
+@login_required(login_url='login')
 def update(request, id):
   bookmark = Bookmarks.objects.get(id=id)
   form = BookmarksForm(instance=bookmark)
@@ -77,6 +95,7 @@ def update(request, id):
       return redirect('overview')
   return render(request, 'main/bookmark-form.html', {'form': form})
 
+@login_required(login_url='login')
 def delete(request, id):
   bookmark = Bookmarks.objects.get(id=id)
   if request.method == 'POST':
